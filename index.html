@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Gallery</title>
+</head>
+<body>
+    <h1>Image Gallery</h1>
+    <div id="image-container"></div>
+
+    <script>
+        // Function to load and display images
+        function loadImages() {
+            const imageContainer = document.getElementById('image-container');
+            const imageFolder = 'images/'; // Specify the path to your image folder
+            const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']; // Add more extensions if needed
+
+            fetch(imageFolder)
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const htmlDocument = parser.parseFromString(data, 'text/html');
+                    const links = htmlDocument.querySelectorAll('a');
+
+                    links.forEach(link => {
+                        const imageUrl = link.getAttribute('href');
+                        if (imageExtensions.some(ext => imageUrl.endsWith(ext))) {
+                            const imageElement = document.createElement('img');
+                            imageElement.src = imageFolder + imageUrl;
+                            imageElement.alt = imageUrl;
+                            imageContainer.appendChild(imageElement);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading images:', error);
+                });
+        }
+
+        // Call the loadImages function when the page loads
+        window.onload = loadImages;
+    </script>
+</body>
+</html>
